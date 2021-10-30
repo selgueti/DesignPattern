@@ -11,7 +11,7 @@ public class Paint {
 		String pathName = "";
 		Canvas area;
 		
-		if(args.length < 1 && args.length > 2){
+		if(args.length < 1 || args.length > 2){
 			throw new IllegalArgumentException("Usage: Paint <file> [--legacy]");
 		}
 		for(var arg : args) {
