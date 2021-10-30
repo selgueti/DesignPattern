@@ -1,0 +1,4 @@
+ellipse 50 400 200 200
+rectangle 10 10 100 100
+rectangle 300 300 100 100
+ellipse 600 50 170 70
