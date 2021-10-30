@@ -13,7 +13,7 @@ class CmdLineParserTest {
 	@Test
 	public void registerNullOption() {
 		var parser = new CmdLineParser();
-		assertThrows(NullPointerException.class, () -> parser.registerOption(null, new Action(() -> { ; })));
+		assertThrows(NullPointerException.class, () -> parser.registerOption(null, new Action(() -> {})));
 	}
 
 	@Test
@@ -29,14 +29,14 @@ class CmdLineParserTest {
 		parser.registerOption("-legacy", new Action(() -> lst.add(1)));
 		String[] strings = {"-legacy"};
 		parser.process(strings);
-		assertEquals(lst.contains(1), true);
+		assertTrue(lst.contains(1));
 	}
 	
 	/* Test registerWithParameter */
 	@Test
 	public void registerWithParameterNullOption() {
 		var parser = new CmdLineParser();
-		assertThrows(NullPointerException.class, () -> parser.registerWithParameter(null, new Action(() -> { ; })));
+		assertThrows(NullPointerException.class, () -> parser.registerWithParameter(null, new Action(() -> {})));
 	}
 	
 	@Test
@@ -49,17 +49,16 @@ class CmdLineParserTest {
 	public void registerWithParameterGoodOptionTest() {
 		var parser = new CmdLineParser();
 		var lst = new ArrayList<String>();
-		parser.registerWithParameter("-legacy", new Action((str) -> lst.add(str)));
+		parser.registerWithParameter("-legacy", new Action(lst::add));
 		String[] strings = {"-legacy", "parameter"};
 		parser.process(strings);
-		assertEquals(lst.contains("parameter"), true);
+		assertTrue(lst.contains("parameter"));
 	}
 
 	@Test
 	public void registerWithParameterGoodOptionNoParameterTest() {
 		var parser = new CmdLineParser();
-		var lst = new ArrayList<String>();
-		parser.registerWithParameter("-legacy", new Action((str) -> lst.add(str)));
+		parser.registerWithParameter("-legacy", new Action((str) -> {}));
 		String[] strings = {"-legacy"};
 		assertThrows(IllegalArgumentException.class, () -> parser.process(strings));
 	}
@@ -91,9 +90,9 @@ class CmdLineParserTest {
 		parser.registerOption("-test", new Action(() -> lst.add("toto")));
 		var file = parser.process(args);
 		assertEquals(file.size(), 1); /* '-legacy' */
-		assertEquals(file.contains("-legacy"), true);
+		assertTrue(file.contains("-legacy"));
 		assertEquals(lst.size(), 1); /* 'toto' */
-		assertEquals(lst.contains("toto"), true);
+		assertTrue(lst.contains("toto"));
 	}
 	
 	@Test
@@ -104,7 +103,7 @@ class CmdLineParserTest {
 		parser.registerOption("-test", new Action(() -> lst.add("toto")));
 		var file = parser.process(args);
 		assertEquals(file.size(), 1); /* '-legacy' */
-		assertEquals(file.contains("-legacy"), true);
+		assertTrue(file.contains("-legacy"));
 		assertEquals(lst.size(), 0);
 	}
 	
@@ -113,13 +112,13 @@ class CmdLineParserTest {
 		var parser = new CmdLineParser();
 		String[] args = {"-legacy", "-test", "parameter1"};
 		var lst = new ArrayList<String>();
-		parser.registerWithParameter("-test", new Action((str) -> lst.add(str)));
+		parser.registerWithParameter("-test", new Action(lst::add));
 		
 		var file = parser.process(args);
 		assertEquals(file.size(), 1); /* '-legacy' */
-		assertEquals(file.contains("-legacy"), true);
+		assertTrue(file.contains("-legacy"));
 		assertEquals(lst.size(), 1);
-		assertEquals(lst.contains("parameter1"), true);
+		assertTrue(lst.contains("parameter1"));
 	}
 
 	@Test
@@ -127,13 +126,13 @@ class CmdLineParserTest {
 		var parser = new CmdLineParser();
 		String[] args = {"-legacy", "test", "parameter1"};
 		var lst = new ArrayList<String>();
-		parser.registerWithParameter("-test", new Action((str) -> lst.add(str)));
+		parser.registerWithParameter("-test", new Action(lst::add));
 		
 		var file = parser.process(args);
 		assertEquals(file.size(), 3); /* '-legacy', 'parameter1' */
-		assertEquals(file.contains("-legacy"), true);
-		assertEquals(file.contains("test"), true);
-		assertEquals(file.contains("parameter1"), true);
+		assertTrue(file.contains("-legacy"));
+		assertTrue(file.contains("test"));
+		assertTrue(file.contains("parameter1"));
 		assertEquals(lst.size(), 0);
 	}
 	
@@ -141,8 +140,7 @@ class CmdLineParserTest {
 	public void processGoodArgumentWithOptionAndNoParameter() {
 		var parser = new CmdLineParser();
 		String[] args = {"-legacy", "-test"};
-		var lst = new ArrayList<String>();
-		parser.registerWithParameter("-test", new Action((str) -> lst.add(str)));
+		parser.registerWithParameter("-test", new Action(str -> {}));
 		assertThrows(IllegalArgumentException.class, () -> parser.process(args));
 	}
 }
