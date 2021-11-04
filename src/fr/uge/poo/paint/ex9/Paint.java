@@ -29,5 +29,6 @@ public class Paint {
 				        : new CoolGraphicsAdapter  ("area", windowSize.height(), windowSize.width());
 		drawing.paintAll(area);
 		drawing.onClick(area);
+			
 	}
 }

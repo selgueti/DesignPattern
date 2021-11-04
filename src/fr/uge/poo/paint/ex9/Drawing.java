@@ -13,7 +13,7 @@ import fr.uge.poo.paint.ex9.Canvas.CanvasColor;
 
 public class Drawing {
 	private Shape selected;
-	private final ArrayList<Shape> shapes;
+	private final List<Shape> shapes;
 
 	private Drawing(List<Shape> shapes) {
 		this.shapes = new ArrayList<>(List.copyOf(shapes));

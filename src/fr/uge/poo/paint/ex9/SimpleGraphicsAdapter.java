@@ -11,7 +11,7 @@ import fr.uge.poo.simplegraphics.SimpleGraphics;
 
 public final class SimpleGraphicsAdapter implements Canvas {
 	private final SimpleGraphics sg;
-	private final ArrayList<Consumer<Graphics2D>> drawCalls = new ArrayList<>();
+	private Consumer<Graphics2D> drawCalls = g -> {} ;
 
 	public SimpleGraphicsAdapter(String name, int width, int height) {
 		Objects.requireNonNull(name);
@@ -39,7 +39,7 @@ public final class SimpleGraphicsAdapter implements Canvas {
 	@Override
 	public void drawLine(CanvasColor canvasColor, int x1, int y1, int x2, int y2) {
 		Objects.requireNonNull(canvasColor);
-		drawCalls.add(g -> {
+		drawCalls = drawCalls.andThen(g -> {
 			g.setColor(translate(canvasColor));
 			g.drawLine(x1, y1, x2, y2);
 		});
@@ -49,7 +49,7 @@ public final class SimpleGraphicsAdapter implements Canvas {
 	@Override
 	public void drawRect(CanvasColor canvasColor, int x, int y, int width, int height) {
 		Objects.requireNonNull(canvasColor);
-		drawCalls.add(g -> {
+		drawCalls = drawCalls.andThen(g -> {
 			g.setColor(translate(canvasColor));
 			g.drawRect(x, y, width, height);
 		});
@@ -58,7 +58,7 @@ public final class SimpleGraphicsAdapter implements Canvas {
 	@Override
 	public void drawEllipse(CanvasColor canvasColor, int x, int y, int width, int height) {
 		Objects.requireNonNull(canvasColor);
-		drawCalls.add(g -> {
+		drawCalls = drawCalls.andThen(g -> {
 			g.setColor(translate(canvasColor));
 			g.drawOval(x, y, width, height);
 		});
@@ -71,8 +71,7 @@ public final class SimpleGraphicsAdapter implements Canvas {
 
 	@Override
 	public void refresh() {
-		var list = List.copyOf(drawCalls);
-		sg.render(graphics -> list.forEach(it -> it.accept(graphics)));
-		drawCalls.clear();
+		sg.render(drawCalls);
+		drawCalls = g -> {};
 	}
 }

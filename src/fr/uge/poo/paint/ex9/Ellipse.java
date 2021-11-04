@@ -10,11 +10,11 @@ public class Ellipse extends ShapeInRect {
 
 	@Override
 	public void draw(Canvas canvas, CanvasColor color) {
-		canvas.drawEllipse(color, x, y, width, height);
+		canvas.drawEllipse(color, getX(), getY(), getWidth(), getHeight());
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof Ellipse ellipse && x == ellipse.x && y == ellipse.y && width == ellipse.width && height == ellipse.height;
+		return obj instanceof Ellipse ellipse && getX() == ellipse.getX() && getY() == ellipse.getY() && getWidth() == ellipse.getWidth() && getHeight() == ellipse.getHeight();
 	}
 }

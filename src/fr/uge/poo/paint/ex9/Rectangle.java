@@ -10,11 +10,11 @@ public class Rectangle extends ShapeInRect {
 
 	@Override
 	public void draw(Canvas canvas, CanvasColor color) {
-		canvas.drawRect(color, x, y, width, height);		
+		canvas.drawRect(color, getX(), getY(), getWidth(), getHeight());		
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof Rectangle rect && x == rect.x && y == rect.y && width == rect.width && height == rect.height;
+		return obj instanceof Rectangle rect && getX() == rect.getX() && getY() == rect.getY() && getWidth() == rect.getWidth() && getHeight() == rect.getHeight();
 	}
 }
