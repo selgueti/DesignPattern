@@ -44,10 +44,10 @@ public class Application {
 		String[] arguments = { "-legacy", "-no-borders", "filename1", "filename2", "-border-width", "3" };
 		var cmdParser = new CmdLineParser();
 
-		cmdParser.registerOption("-legacy", new Action(() -> options.setLegacy(true)));
-		cmdParser.registerOption("-with-borders", new Action(() -> options.setBordered(true)));
-		cmdParser.registerOption("-no-borders", new Action(() -> options.setBordered(false)));
-		cmdParser.registerWithParameter("-border-width", new Action(n -> options.setBorderWidth(Integer.parseInt(n))));
+		cmdParser.registerOption("-legacy", iterString -> options.setLegacy(true));
+		cmdParser.registerOption("-with-borders", iterString -> options.setBordered(true));
+		cmdParser.registerOption("-no-borders", iterString -> options.setBordered(false));
+		cmdParser.registerWithParameter("-border-width", 1, iterString -> options.setBorderWidth(Integer.parseInt(iterString.next())));
 
 		List<String> result = cmdParser.process(arguments);
 		List<Path> files = result.stream().map(Path::of).collect(Collectors.toList());

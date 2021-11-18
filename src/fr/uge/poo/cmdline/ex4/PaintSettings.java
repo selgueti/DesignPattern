@@ -1,4 +1,4 @@
-package fr.uge.poo.cmdline.ex3;
+package fr.uge.poo.cmdline.ex4;
 
 import java.net.InetSocketAddress;
 
@@ -62,14 +62,13 @@ public class PaintSettings {
 			this.remoteServer = new InetSocketAddress(name, port);
 			return this;
 		}
-		
+
 		public PaintSettings build() {
-			if (windowName == "") {
+			if (windowName == "") { // TODO who manages the name obligation for the window?
 				throw new IllegalArgumentException("window name is required");
 			}
 			return new PaintSettings(this);
 		}
-
 	}
 
 	@Override

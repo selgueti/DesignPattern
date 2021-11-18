@@ -1,10 +1,11 @@
-package fr.uge.poo.cmdline.ex3;
+package fr.uge.poo.cmdline.ex4;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import fr.uge.poo.cmdline.ex3.PaintSettings.PaintSettingsBuilder;
+import fr.uge.poo.cmdline.ex4.CmdLineParser.Required;
+import fr.uge.poo.cmdline.ex4.PaintSettings.PaintSettingsBuilder;
 
 public class Application {
 
@@ -13,13 +14,13 @@ public class Application {
 		var options = new PaintSettingsBuilder();
 
 		String[] arguments = { "-window-name", "fmzeknfzknze", "-legacy", "-no-borders", "filename1", "filename2",
-				"-border-width", "3", "-min-size", "600", "600", "-remote-server", "igm.fr", "48" };
+				"-border-width", "3", "-remote-server", "igm.fr", "48" , "-min-size", "600", "600"};
 		var cmdParser = new CmdLineParser();
 
 		cmdParser.addFlag("-legacy", () -> options.setLegacy(true));
-		cmdParser.addOptionWithOneParameter("-with-borders", iterString -> options.setBordered(true));
+		cmdParser.addOptionWithOneParameter("-with-borders", parameters -> options.setBordered(true));
 		cmdParser.addFlag("-no-borders", () -> options.setBordered(false));
-		cmdParser.registerWithParameter("-min-size", 2, parameters -> {
+		cmdParser.registerWithParameter("-min-size", 2, Required.YES, parameters -> {
 			int width = 0;
 			int height = 0;
 			try {
@@ -48,7 +49,7 @@ public class Application {
 
 		cmdParser.addOptionWithOneParameter("-border-width", bw -> options.setBorderWidth(Integer.parseInt(bw)));
 
-		cmdParser.registerWithParameter("-remote-server", 2, parameters -> {
+		cmdParser.registerWithParameter("-remote-server", 2, Required.NO, parameters -> {
 			var name = "";
 			var port = 0;
 			var parameter = parameters.get(0);
