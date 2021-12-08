@@ -2,11 +2,10 @@ package fr.uge.poo.cmdline.ex2;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Application {
 
-	static private class PaintSettings {
+	  static private class PaintSettings {
 		private boolean legacy = false;
 		private boolean bordered = true;
 		private int borderWidth = 0;
@@ -50,11 +49,11 @@ public class Application {
 		cmdParser.registerWithParameter("-border-width", 1, iterString -> options.setBorderWidth(Integer.parseInt(iterString.next())));
 
 		List<String> result = cmdParser.process(arguments);
-		List<Path> files = result.stream().map(Path::of).collect(Collectors.toList());
+		List<Path> files = result.stream().map(Path::of).toList();
 		// this code replaces the rest of the application
-		files.forEach(p -> System.out.println(p));
+		files.forEach(System.out::println);
 
-		System.out.println(options.toString());
+		System.out.println(options);
 
 	}
 }

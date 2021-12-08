@@ -1,12 +1,24 @@
-package fr.uge.poo.cmdline.ex3;
+package fr.uge.poo.cmdline.ex7;
+
+import fr.uge.poo.cmdline.ex7.Option.OptionBuilder;
 
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
+import java.text.ParseException;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Application {
 
-	static private class PaintSettings {
+	private static class PaintSettings {
+
+		record WindowSize(int width, int height) {
+
+			public WindowSize union (WindowSize ws){
+				return new WindowSize(Math.max(this.width, ws.width()), Math.max(this.width, ws.width()));
+			}
+		}
+
 
 		private final boolean legacy;
 		private final boolean bordered;
@@ -15,15 +27,7 @@ public class Application {
 		private final WindowSize minWindowSize;
 		private final InetSocketAddress remoteServer;
 
-		private record WindowSize(int width, int height) {
-
-			private WindowSize union (WindowSize ws){
-				return new WindowSize(Math.max(this.width, ws.width()), Math.max(this.width, ws.width()));
-			}
-
-		}
-
-		private PaintSettings(PaintSettings.PaintSettingsBuilder builder) {
+		private PaintSettings(PaintSettingsBuilder builder) {
 			this.legacy = builder.legacy;
 			this.bordered = builder.bordered;
 			this.borderWidth = builder.borderWidth;
@@ -81,7 +85,6 @@ public class Application {
 				}
 				return new PaintSettings(this);
 			}
-
 		}
 
 		@Override
@@ -92,18 +95,19 @@ public class Application {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParseException {
 
-		var options = new PaintSettings.PaintSettingsBuilder();
-
-		String[] arguments = { "-window-name", "hello.txt", "-legacy", "-no-borders", "filename1", "filename2",
-				"-border-width", "3", "-min-size", "600", "600", "-remote-server", "igm.fr", "48" };
+		var settingsBuilder = new PaintSettings.PaintSettingsBuilder();
 		var cmdParser = new CmdLineParser();
 
-		cmdParser.addFlag("-legacy", () -> options.setLegacy(true));
-		cmdParser.addOptionWithOneParameter("-with-borders", iterString -> options.setBordered(true));
-		cmdParser.addFlag("-no-borders", () -> options.setBordered(false));
-		cmdParser.registerWithParameter("-min-size", 2, parameters -> {
+		String[] arguments = { "-window-name", "hello.txt", "-legacy", "-with-borders", "filename1", "filename2",
+				"-border-width", "3", "-remote-server", "igm.fr", "48" , "-m", "600", "600", "-test"};
+
+
+		cmdParser.addFlag("-legacy", () -> settingsBuilder.setLegacy(true));
+		cmdParser.addOptionWithOneParameter("-with-borders", parameters -> settingsBuilder.setBordered(true));
+
+		Consumer<List<String>> consumerMinSize = parameters -> {
 			int width;
 			int height;
 			try {
@@ -124,13 +128,15 @@ public class Application {
 			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("height mush be integer");
 			}
-			var ws = new PaintSettings.WindowSize(width, height);
-			options.setMinSize(ws);
-		});
+			settingsBuilder.setMinSize(new PaintSettings.WindowSize(width, height));
+		};
 
-		cmdParser.addOptionWithOneParameter("-window-name", options::setWindowName);
+		Option winSize = new OptionBuilder("-min-size", 2, consumerMinSize).setNotice("set min-size window").alias("-m").build();
+		cmdParser.addOption(winSize);
 
-		cmdParser.addOptionWithOneParameter("-border-width", bw -> options.setBorderWidth(Integer.parseInt(bw)));
+		cmdParser.addOptionWithOneParameter("-window-name", settingsBuilder::setWindowName);
+
+		cmdParser.addOptionWithOneParameter("-border-width", bw -> settingsBuilder.setBorderWidth(Integer.parseInt(bw)));
 
 		cmdParser.registerWithParameter("-remote-server", 2, parameters -> {
 			var name = "";
@@ -147,19 +153,27 @@ public class Application {
 				throw new IllegalArgumentException("port mush be integer");
 			}
 //			options.setRemoteServer(new InetSocketAddress(name, port));
-			options.setRemoteServer(name, port);
+			settingsBuilder.setRemoteServer(name, port);
 		});
 
+		Option requiredTest = new OptionBuilder("-test", 0, l -> {}).required().build();
+
+		cmdParser.addOption(requiredTest);
+
+
 		// options.setWindowName("area");
+
+
 		List<String> result = cmdParser.process(arguments);
 
-		var settings = options.build();
+		var settings = settingsBuilder.build();
 
 		List<Path> files = result.stream().map(Path::of).toList();
 		// this code replaces the rest of the application
 		files.forEach(System.out::println);
 
 		System.out.println(settings);
-
+		
+		cmdParser.usage();
 	}
 }

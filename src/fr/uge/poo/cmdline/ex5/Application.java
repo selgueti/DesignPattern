@@ -1,12 +1,14 @@
-package fr.uge.poo.cmdline.ex3;
+package fr.uge.poo.cmdline.ex5;
 
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.util.List;
 
+import static fr.uge.poo.cmdline.ex5.CmdLineParser.*;
+
 public class Application {
 
-	static private class PaintSettings {
+	private static class PaintSettings {
 
 		private final boolean legacy;
 		private final boolean bordered;
@@ -20,10 +22,10 @@ public class Application {
 			private WindowSize union (WindowSize ws){
 				return new WindowSize(Math.max(this.width, ws.width()), Math.max(this.width, ws.width()));
 			}
-
 		}
 
-		private PaintSettings(PaintSettings.PaintSettingsBuilder builder) {
+
+		private PaintSettings(PaintSettingsBuilder builder) {
 			this.legacy = builder.legacy;
 			this.bordered = builder.bordered;
 			this.borderWidth = builder.borderWidth;
@@ -32,7 +34,7 @@ public class Application {
 			this.remoteServer = builder.remoteServer;
 		}
 
-		private static class PaintSettingsBuilder {
+		static private class PaintSettingsBuilder {
 			private boolean legacy = false;
 			private boolean bordered = true;
 			private int borderWidth = 10;
@@ -81,7 +83,6 @@ public class Application {
 				}
 				return new PaintSettings(this);
 			}
-
 		}
 
 		@Override
@@ -92,18 +93,19 @@ public class Application {
 		}
 	}
 
+
 	public static void main(String[] args) {
 
 		var options = new PaintSettings.PaintSettingsBuilder();
 
 		String[] arguments = { "-window-name", "hello.txt", "-legacy", "-no-borders", "filename1", "filename2",
-				"-border-width", "3", "-min-size", "600", "600", "-remote-server", "igm.fr", "48" };
+				"-border-width", "3", "-remote-server", "igm.fr", "48" , "-min-size", "600", "600"};
 		var cmdParser = new CmdLineParser();
 
 		cmdParser.addFlag("-legacy", () -> options.setLegacy(true));
-		cmdParser.addOptionWithOneParameter("-with-borders", iterString -> options.setBordered(true));
+		cmdParser.addOptionWithOneParameter("-with-borders", parameters -> options.setBordered(true));
 		cmdParser.addFlag("-no-borders", () -> options.setBordered(false));
-		cmdParser.registerWithParameter("-min-size", 2, parameters -> {
+		cmdParser.registerWithParameter("-min-size", 2, Required.YES, parameters -> {
 			int width;
 			int height;
 			try {
@@ -132,7 +134,7 @@ public class Application {
 
 		cmdParser.addOptionWithOneParameter("-border-width", bw -> options.setBorderWidth(Integer.parseInt(bw)));
 
-		cmdParser.registerWithParameter("-remote-server", 2, parameters -> {
+		cmdParser.registerWithParameter("-remote-server", 2, Required.NO, parameters -> {
 			var name = "";
 			var port = 0;
 			var parameter = parameters.get(0);

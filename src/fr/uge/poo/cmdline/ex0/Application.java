@@ -2,7 +2,6 @@ package fr.uge.poo.cmdline.ex0;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Application {
 
@@ -40,9 +39,9 @@ public class Application {
         cmdParser.registerOption("-with-borders");
         cmdParser.registerOption("-no-borders");
         List<String> result = cmdParser.process(arguments);
-        List<Path> files = result.stream().map(Path::of).collect(Collectors.toList());
+        List<Path> files = result.stream().map(Path::of).toList();
         // this code replaces the rest of the application
-        files.forEach(p -> System.out.println(p));
+        files.forEach(System.out::println);
         var seen = cmdParser.getOptionsSeen();
         if (seen.contains("-legacy")){
             options.setLegacy(true);
@@ -53,7 +52,7 @@ public class Application {
         if (seen.contains("-no-borders")){
             options.setBordered(false);
         }
-        System.out.println(options.toString());
+        System.out.println(options);
 
     }
 }

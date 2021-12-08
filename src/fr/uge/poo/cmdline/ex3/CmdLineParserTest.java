@@ -52,7 +52,7 @@ class CmdLineParserTest {
 		var parser = new CmdLineParser();
 		String[] arguments = {"-test", "yes"};
 		ArrayList<String> lst = new ArrayList<>();
-		parser.addOptionWithOneParameter("-test", parameter -> lst.add(parameter));
+		parser.addOptionWithOneParameter("-test", lst::add);
 		parser.process(arguments);
 		assertTrue(lst.contains("yes"));
 	}
@@ -61,8 +61,7 @@ class CmdLineParserTest {
 	public void addGoodOptionWithoutOneParameter() {
 		var parser = new CmdLineParser();
 		String[] arguments = {"-test"};
-		ArrayList<String> lst = new ArrayList<>();
-		parser.addOptionWithOneParameter("-test", parameter -> lst.add(parameter));
+		parser.addOptionWithOneParameter("-test", l -> {});
 		assertThrows(IllegalArgumentException.class, () -> parser.process(arguments));
 	}
 	
