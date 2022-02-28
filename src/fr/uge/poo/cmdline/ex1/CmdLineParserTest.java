@@ -13,20 +13,20 @@ class CmdLineParserTest {
 	@Test
 	public void registerNullOption() {
 		var parser = new CmdLineParser();
-		assertThrows(NullPointerException.class, () -> parser.registerOption(null, System.out::println));
+		assertThrows(NullPointerException.class, () -> parser.addFlag(null, System.out::println));
 	}
 
 	@Test
 	public void registerNullRunnable() {
 		var parser = new CmdLineParser();
-		assertThrows(NullPointerException.class, () -> parser.registerOption("-legacy", null));
+		assertThrows(NullPointerException.class, () -> parser.addFlag("-legacy", null));
 	}
 
 	@Test
 	public void registerGoodOptionTest() {
 		var parser = new CmdLineParser();
 		var lst = new ArrayList<Integer>();
-		parser.registerOption("-legacy", () -> lst.add(1));
+		parser.addFlag("-legacy", () -> lst.add(1));
 		String[] strings = { "-legacy" };
 		parser.process(strings);
 		assertTrue(lst.contains(1));

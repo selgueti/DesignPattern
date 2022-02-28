@@ -14,11 +14,15 @@ public class CmdLineParser {
 	private final Map<String, Consumer<Iterator<String>>> options = new HashMap<>();
 	private final Map<String, Integer> nbParams = new HashMap<>();
 
-	public void registerOption(String option, Consumer<Iterator<String>> action) {
+	public void addFlag(String option, Consumer<Iterator<String>> action) {
 		Objects.requireNonNull(option);
 		Objects.requireNonNull(action);
 		options.put(option, action);
 		nbParams.put(option, 0);
+	}
+
+	public void addOptionWithOneParameter(String option, Consumer<Iterator<String>> action){
+		registerWithParameter(option, 1, action);
 	}
 
 	public void registerWithParameter(String option, int nbParam, Consumer<Iterator<String>> action) {

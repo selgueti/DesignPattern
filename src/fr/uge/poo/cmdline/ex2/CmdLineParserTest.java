@@ -13,20 +13,20 @@ class CmdLineParserTest {
 	@Test
 	public void registerNullOption() {
 		var parser = new CmdLineParser();
-		assertThrows(NullPointerException.class, () -> parser.registerOption(null, iterString -> {}));
+		assertThrows(NullPointerException.class, () -> parser.addFlag(null, iterString -> {}));
 	}
 
 	@Test
 	public void registerNullRunnable() {
 		var parser = new CmdLineParser();
-		assertThrows(NullPointerException.class, () -> parser.registerOption("-legacy", null));
+		assertThrows(NullPointerException.class, () -> parser.addFlag("-legacy", null));
 	}
 
 	@Test
 	public void registerGoodOptionTest() {
 		var parser = new CmdLineParser();
 		var lst = new ArrayList<Integer>();
-		parser.registerOption("-legacy", iterString -> lst.add(1));
+		parser.addFlag("-legacy", iterString -> lst.add(1));
 		String[] strings = {"-legacy"};
 		parser.process(strings);
 		assertTrue(lst.contains(1));
@@ -87,7 +87,7 @@ class CmdLineParserTest {
 		var parser = new CmdLineParser();
 		String[] args = {"-legacy", "-test"};
 		var lst = new ArrayList<String>();
-		parser.registerOption("-test", iterString -> lst.add("toto"));
+		parser.addFlag("-test", iterString -> lst.add("toto"));
 		var file = parser.process(args);
 		assertEquals(file.size(), 1); /* '-legacy' */
 		assertTrue(file.contains("-legacy"));
@@ -100,7 +100,7 @@ class CmdLineParserTest {
 		var parser = new CmdLineParser();
 		String[] args = {"-legacy"};
 		var lst = new ArrayList<String>();
-		parser.registerOption("-test", iterString -> lst.add("toto"));
+		parser.addFlag("-test", iterString -> lst.add("toto"));
 		var file = parser.process(args);
 		assertEquals(file.size(), 1); /* '-legacy' */
 		assertTrue(file.contains("-legacy"));

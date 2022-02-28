@@ -6,7 +6,7 @@ public class CmdLineParser {
 
 	private final HashMap<String, Runnable> options = new HashMap<>();
 
-	public void registerOption(String option, Runnable runnable) {
+	public void addFlag(String option, Runnable runnable) {
 		Objects.requireNonNull(option);
 		Objects.requireNonNull(runnable);
 		options.put(option, runnable);
